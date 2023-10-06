@@ -2,6 +2,7 @@
 This script contains utility functions/classes that are used in serve.py
 """
 import uuid
+import os
 from typing import Any, Dict, Tuple
 
 import pandas as pd
@@ -9,7 +10,7 @@ import pandas as pd
 from config import paths
 from data_models.data_validator import validate_data
 from logger import get_logger, log_error
-from Classifier import load_predictor_model
+from Classifier import load_predictor_model, predict_with_model
 from schema.data_schema import load_saved_schema
 from utils import read_json_as_dict
 
@@ -86,7 +87,7 @@ async def transform_req_data_and_make_predictions(
             prediction response.
     """
     logger.info(f"Predictions requested for {len(data)} samples...")
-
+    model_config = read_json_as_dict(paths.MODEL_CONFIG_FILE_PATH)
     # validate the data
     logger.info("Validating data...")
     validate_data(data=data, data_schema=model_resources.data_schema, is_train=False)
@@ -96,18 +97,11 @@ async def transform_req_data_and_make_predictions(
     data = data.drop(columns=model_resources.data_schema.id)
 
     logger.info("Making predictions...")
-    predictions_df = model_resources.predictor_model.predictor.predict_all(data)
+    predict_with_model(model_resources.predictor_model, data)
 
-    predictions_df.drop(columns="label", inplace=True)
-    columns = predictions_df.columns
-    new_columns = []
-    for i in columns:
-        if i.__contains__("prediction_"):
-            new_columns.append(i.strip("prediction_"))
-        else:
-            new_columns.append(i)
-
-    predictions_df.columns = new_columns
+    prediction_file_name = f"{model_resources.data_schema.target}_predictions.csv"
+    prediction_file_path = os.path.join(model_resources.predictor_model.result_path, prediction_file_name)
+    predictions_df = pd.read_csv(prediction_file_path)[model_resources.data_schema.target_classes]
     predictions_df[model_resources.data_schema.id] = ids
 
     logger.info("Converting predictions dataframe into response dictionary...")
