@@ -115,9 +115,9 @@ curl -X POST -H "Content-Type: application/json" -d '{
   {
     "instances": [
         {
-          "id": "C14AN3",
-          "number": null,
-          "color": "Green"
+          "id": "DFFXKT",
+          "color": null,
+          "number": null
         }
     ]
 }' http://localhost:8080/infer
@@ -129,13 +129,15 @@ The key `instances` contains a list of objects, each of which is a sample for wh
 {
   "status": "success",
   "message": "",
-  "timestamp": "2023-09-07T17:14:17.387476",
-  "requestId": "488fc58e97",
-  "targetDescription": "Target variable",
+  "timestamp": "2023-08-06T17:40:47.765863",
+  "requestId": "19ebe8d6ce",
+  "targetClasses": ["0", "1", "2"],
+  "targetDescription": "Target class: one of {0, 1, 2}",
   "predictions": [
     {
-      "sampleId": "C14AN3",
-      "prediction": 101.68118
+      "sampleId": "DFFXKT",
+      "predictedClass": "2",
+      "predictedProbabilities": [0.00143, 0.0, 0.99857]
     }
   ]
 }
