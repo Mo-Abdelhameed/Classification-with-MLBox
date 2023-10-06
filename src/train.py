@@ -35,6 +35,8 @@ def run_training(
 
         if os.path.exists(result_path):
             clear_dir(result_path)
+        else:
+            os.mkdir(result_path)
 
         logger.info("Loading and saving schema...")
         data_schema = load_json_data_schema(input_schema_dir)
