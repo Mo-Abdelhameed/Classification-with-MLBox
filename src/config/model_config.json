@@ -1,0 +1,15 @@
+{
+  "seed_value": 123,
+  "max_evals": 20,
+  "prediction_field_name": "prediction",
+  "scoring": "neg_root_mean_squared_error",
+  "algorithms": [
+    "LightGBM",
+    "RandomForest",
+    "ExtraTrees"
+  ],
+  "est__max_depth": {"search": "choice", "space": [5, 10, 15, 20, null]},
+  "est__n_estimators": {"search": "choice", "space": [50, 100, 150, 200]},
+  "est__num_leaves": {"search": "choice", "space": [20, 30, 40]}  
+}
+
