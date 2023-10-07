@@ -77,7 +77,7 @@ In this section we cover the following:
 - Run the script `src/predict.py` to run batch predictions using the trained model. This script will load the artifacts and create and save the predictions in a file called `predictions.csv` in the path `./model_inputs_outputs/outputs/predictions/`.
 - Run the script `src/serve.py` to start the inference service, which can be queried using the `/ping` and `/infer` endpoints. The service runs on port 8080.
 
-#### Note: MLBox works with python 3.5, 3.6 and 3.7, having a more recent versions might cause installation issues. It is highly recommended to install python3.7 and create a virtual environment for the projects.
+#### Note: MLBox works with python 3.5, 3.6 and 3.7, having more recent versions might cause installation issues. It is highly recommended to install python3.7 and create a virtual environment for the projects.
 
 ### To run with Docker
 
