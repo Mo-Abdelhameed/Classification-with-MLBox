@@ -14,3 +14,4 @@ tables==3.5.2
 xlrd==1.2.0
 protobuf==3.20.0
 mlbox==0.8.5
+psutil==5.9.8

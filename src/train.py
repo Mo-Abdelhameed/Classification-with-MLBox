@@ -4,7 +4,7 @@ from config import paths
 from logger import get_logger, log_error
 from Classifier import Classifier
 from schema.data_schema import load_json_data_schema, save_schema
-from utils import read_csv_in_directory, set_seeds, encode_target, clear_dir
+from utils import read_csv_in_directory, set_seeds, encode_target, clear_dir, ResourceTracker
 
 
 logger = get_logger(task_name="train")
@@ -30,34 +30,35 @@ def run_training(
         None
     """
     try:
-        logger.info("Starting training...")
-        set_seeds(seed_value=123)
+        with ResourceTracker(logger, monitoring_interval=0.1):
+            logger.info("Starting training...")
+            set_seeds(seed_value=123)
 
-        if os.path.exists(result_path):
-            clear_dir(result_path)
-        else:
-            os.mkdir(result_path)
+            if os.path.exists(result_path):
+                clear_dir(result_path)
+            else:
+                os.mkdir(result_path)
 
-        logger.info("Loading and saving schema...")
-        data_schema = load_json_data_schema(input_schema_dir)
-        save_schema(schema=data_schema, save_dir_path=saved_schema_dir_path)
+            logger.info("Loading and saving schema...")
+            data_schema = load_json_data_schema(input_schema_dir)
+            save_schema(schema=data_schema, save_dir_path=saved_schema_dir_path)
 
-        logger.info("Loading training data...")
-        x_train = read_csv_in_directory(train_dir)
+            logger.info("Loading training data...")
+            x_train = read_csv_in_directory(train_dir)
 
-        target = x_train[data_schema.target]
-        x_train = x_train.drop(columns=[data_schema.id, data_schema.target])
+            target = x_train[data_schema.target]
+            x_train = x_train.drop(columns=[data_schema.id, data_schema.target])
 
-        encoded_target = encode_target(target=target, save_path=result_path)
+            encoded_target = encode_target(target=target, save_path=result_path)
 
-        logger.info("Preprocessing training data...")
-        for column in data_schema.categorical_features:
-            x_train[column] = x_train[column].astype(str)
+            logger.info("Preprocessing training data...")
+            for column in data_schema.categorical_features:
+                x_train[column] = x_train[column].astype(str)
 
-        x_train[data_schema.target] = encoded_target
+            x_train[data_schema.target] = encoded_target
 
-        classifier = Classifier(x_train, data_schema, result_path=result_path)
-        classifier.train()
+            classifier = Classifier(x_train, data_schema, result_path=result_path)
+            classifier.train()
 
         if not os.path.exists(predictor_dir_path):
             os.makedirs(predictor_dir_path)
